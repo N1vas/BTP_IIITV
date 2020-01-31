@@ -8,9 +8,8 @@ const planSchema = new Schema({
     plan_code : { type: String, required: true, unique:true },
     plan_name : { type: String, required: true, unique : true },
     description : { type: String, required: true },
-    isCustomPlan : { type: Boolean },
-    isDefault : { type: Boolean },
-    isActive : { type: Boolean }
+   
+    hashVaule:{type:String}
     
 });
 
