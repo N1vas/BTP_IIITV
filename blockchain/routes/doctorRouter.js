@@ -83,4 +83,95 @@ doctorRouter.route('/:doctorId')
 
 
 
+doctorRouter.route('/:doctorId/labreports')
+.get((req,res,next) => {
+    Doctors.findById(req.params.doctorId)
+    .then((doctor) => {
+        if (doctor != null) {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(doctor.labreports);
+        }
+        else {
+            err = new Error('doctor ' + req.params.doctorId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+.post((req, res, next) => {
+    Doctors.findById(req.params.doctorId)
+    .then((doctor) => {
+        if (doctor != null) {
+            doctor.labreports.push(req.body);
+            doctor.save()
+            .then((doctor) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(doctor);
+            }, (err) => next(err));
+        }
+        else {
+            err = new Error('doctor ' + req.params.doctorId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+
+})
+.put((req, res, next) => {
+    res.statusCode = 403;
+    res.end('PUT operation not supported on /doctor/'
+        + req.params.doctorId );
+})
+
+.delete((req, res, next) => {
+    Doctors.findById(req.params.doctorId)
+    .then((doctor) => {
+        if (doctor != null) {
+            for (var i = (doctor.labreports.length -1); i >= 0; i--) {
+                doctor.labreports.id(doctor.labreports[i]._id).remove();
+            }
+            doctor.save()
+            .then((doctor) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(doctor);                
+            }, (err) => next(err));
+        }
+        else {
+            err = new Error('doctor ' + req.params.doctorId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));    
+});
+
+doctorRouter.route('/:doctorId/labreports/:labreportsId')
+.get((req, res, next) => {
+    Doctors.findById(req.params.doctorId)
+    .then((doctor) => {
+        if( doctor != null && doctor.labreports.id) {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(doctor.labreports.id(req.params.labreportsId));
+        }
+        else if (doctor == null) {
+            err = new Error('doctor ' + req.params.doctorId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+        else {
+            err = new Error('labreports ' + req.params.labreportsId + ' not found');
+            err.status = 404;
+            return next(err);            
+        }
+        
+    }, (err) => next(err))
+    .catch((err) => next(err));
+});
+
 module.exports = doctorRouter;
