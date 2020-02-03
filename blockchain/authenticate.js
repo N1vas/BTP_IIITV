@@ -37,3 +37,53 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
     }));
 
 exports.verifyUser = passport.authenticate('jwt', {session: false});    
+
+exports.verifyAdmin = function(req, res, next) {
+    User.findOne({_id: req.user._id})
+    .then((user) => {
+        console.log("User is ", req.user);
+        if (user.admin) {
+            next();
+        }
+
+        else {
+            err = new Error('Only admins can perform this action');
+            err.status = 403;
+            return next(err);
+        } 
+    }, (err) => next(err))
+    .catch((err) => next(err))
+}
+
+exports.verifyDoctor = function(req, res, next) {
+    User.findOne({_id: req.user._id})
+    .then((user) => {
+        console.log("User is ", req.user);
+        if (user.doctor) {
+            next();
+        }
+
+        else {
+            err = new Error('Only doctors can perform this action');
+            err.status = 403;
+            return next(err);
+        } 
+    }, (err) => next(err))
+    .catch((err) => next(err))
+}
+exports.verifyLabtech = function(req, res, next) {
+    User.findOne({_id: req.user._id})
+    .then((user) => {
+        console.log("User is ", req.user);
+        if (user.labtech) {
+            next();
+        }
+
+        else {
+            err = new Error('Only labtechs can perform this action');
+            err.status = 403;
+            return next(err);
+        } 
+    }, (err) => next(err))
+    .catch((err) => next(err))
+}

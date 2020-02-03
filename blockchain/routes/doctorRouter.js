@@ -11,8 +11,8 @@ const doctorRouter = express.Router();
 doctorRouter.use(bodyParser.json());
 
 doctorRouter.route('/')
-.options( (req, res) => { res.sendStatus(200); })
-.get((req , res , next ) => {
+.options((req, res) => { res.sendStatus(200); })
+.get(authenticate.verifyUser, (req , res , next ) => {
     Doctors.find(req.query) //passing query to find 
     .then((doctors) => {
         res.statusCode = 200;
@@ -21,7 +21,7 @@ doctorRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post( (req, res, next) => {
+.post(authenticate.verifyUser, authenticate.verifyDoctor, (req, res, next) => {
     Doctors.create(req.body)
     .then((doctor) => {
         console.log('doctor Created ',doctor);
@@ -35,7 +35,7 @@ doctorRouter.route('/')
     res.statusCode = 403;
     res.end('PUT operation not supported on /doctor');
 })
-.delete( (req, res, next) => {
+.delete( authenticate.verifyUser, authenticate.verifyDoctor,(req, res, next) => {
     Doctors.remove({})
     .then((resp) => {
         res.statusCode = 200;
@@ -47,7 +47,7 @@ doctorRouter.route('/')
 
 doctorRouter.route('/:doctorId')
 .options( (req, res) => { res.sendStatus(200); })
-.get((req,res,next) => {
+.get(authenticate.verifyUser, authenticate.verifyDoctor, (req,res,next) => {
     Doctors.findById(req.params.doctorId)
     .then((doctors) => {
         res.statusCode = 200;
@@ -60,7 +60,7 @@ doctorRouter.route('/:doctorId')
     res.statusCode = 403;
     res.end('you cannot create on /doctor/'+ req.params.doctorId);
 })
-.put( (req, res, next) => {
+.put( authenticate.verifyUser, authenticate.verifyDoctor, (req, res, next) => {
     Doctors.findByIdAndUpdate(req.params.doctorId, {
         $set: req.body
     }, { new: true })
@@ -71,7 +71,7 @@ doctorRouter.route('/:doctorId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.delete( (req, res, next) => {
+.delete( authenticate.verifyUser, authenticate.verifyDoctor, (req, res, next) => {
     Doctors.findByIdAndRemove(req.params.doctorId)
     .then((resp) => {
         res.statusCode = 200;
@@ -84,7 +84,7 @@ doctorRouter.route('/:doctorId')
 
 
 doctorRouter.route('/:doctorId/labreports')
-.get((req,res,next) => {
+.get(authenticate.verifyUser,(req,res,next) => {
     Doctors.findById(req.params.doctorId)
     .then((doctor) => {
         if (doctor != null) {
@@ -100,7 +100,7 @@ doctorRouter.route('/:doctorId/labreports')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post((req, res, next) => {
+.post(authenticate.verifyUser, authenticate.verifyLabtech, (req, res, next) => {
     Doctors.findById(req.params.doctorId)
     .then((doctor) => {
         if (doctor != null) {
@@ -127,7 +127,7 @@ doctorRouter.route('/:doctorId/labreports')
         + req.params.doctorId );
 })
 
-.delete((req, res, next) => {
+.delete(authenticate.verifyUser, authenticate.verifyLabtech, (req, res, next) => {
     Doctors.findById(req.params.doctorId)
     .then((doctor) => {
         if (doctor != null) {
@@ -151,7 +151,7 @@ doctorRouter.route('/:doctorId/labreports')
 });
 
 doctorRouter.route('/:doctorId/labreports/:labreportsId')
-.get((req, res, next) => {
+.get(authenticate.verifyUser, (req, res, next) => {
     Doctors.findById(req.params.doctorId)
     .then((doctor) => {
         if( doctor != null && doctor.labreports.id) {

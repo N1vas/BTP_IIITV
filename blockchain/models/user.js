@@ -7,6 +7,12 @@ var User = new Schema({
     admin:   {
         type: Boolean,
         default: false
+    },
+    doctor: {
+        type: Boolean,default:false 
+    },
+    labtech : {
+        type: Boolean,default:false 
     }
 });
 
