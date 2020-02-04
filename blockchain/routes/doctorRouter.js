@@ -22,6 +22,7 @@ doctorRouter.route('/')
     .catch((err) => next(err));
 })
 .post(authenticate.verifyUser, authenticate.verifyDoctor, (req, res, next) => {
+    req.body.doctor_name = req.user._id;
     Doctors.create(req.body)
     .then((doctor) => {
         console.log('doctor Created ',doctor);
@@ -104,6 +105,7 @@ doctorRouter.route('/:doctorId/labreports')
     Doctors.findById(req.params.doctorId)
     .then((doctor) => {
         if (doctor != null) {
+            req.body.labtech_name = req.user._id;
             doctor.labreports.push(req.body);
             doctor.save()
             .then((doctor) => {
