@@ -12,11 +12,13 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var planRouter = require('./routes/planRouter');
 var doctorRouter = require('./routes/doctorRouter');
+var myprofileRouter = require('./routes/myprofileRouter');
 
 const mongoose = require('mongoose');
 
 const Plans = require('./models/plans');
 const Doctors = require('./models/doctors');
+const Myprofiles = require('./models/myprofile')
 
 const url =config.mongoUrl;
 const connect = mongoose.connect(url);
@@ -50,6 +52,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/plans', planRouter);
 app.use('/doctors',doctorRouter);
+app.use('/myprofiles', myprofileRouter);
 
 
 // catch 404 and forward to error handler

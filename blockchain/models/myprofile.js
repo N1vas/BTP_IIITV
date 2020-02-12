@@ -40,3 +40,23 @@ var myprofileSchema = new Schema({
     doctorvisit : [doctorSchema]
 
 });
+
+const Myprofiles = mongoose.model('Myprofile', myprofileSchema);
+
+module.exports = Myprofiles;
+
+// {
+// 	"firstname": "ggj",
+// 	"lastname":"nivas",
+// 	"dob": "08-11-1998",
+// 	"gender":"male"
+// }
+
+// {
+	
+//     "observation"  : "weakness, dull",
+//     "disease"      : "depression",
+//     "prescription" :"yoga practice",
+    
+//     "hspid"        : "ALK001"
+// }
