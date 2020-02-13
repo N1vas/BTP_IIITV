@@ -231,8 +231,106 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports')
     }, (err) => next(err))
     .catch((err) => next(err));
 
+})
+
+.put( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('PUT operation not supported on /myprofile');
+})
+.delete( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('DELETE operation not supported on /myprofile');
 });
 
+myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports/:labreportsId')
+.get(authenticate.verifyUser, (req, res, next) => {
+    Myprofiles.findById(req.params.myprofileId)
+    .then((myprofile) => {
+        if( myprofile != null && myprofile.doctorvisit.id(req.params.doctorvisitId).labreports) {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.id(req.params.labreportsId));
+        }
+        else if (myprofile == null) {
+            err = new Error('myprofile ' + req.params.myprofileId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+        else {
+            err = new Error('doctorvisit ' + req.params.doctorvisitId + ' not found');
+            err.status = 404;
+            return next(err);            
+        }
+        
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+.post( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('POST operation not supported on /myprofile');
+})
+.put( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('PUT operation not supported on /myprofile');
+})
+.delete( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('DELETE operation not supported on /myprofile');
+});
+
+
+myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports/:labreportsId/reportdata')
+.get(authenticate.verifyUser, (req, res, next) => {
+    Myprofiles.findById(req.params.myprofileId)
+    .then((myprofile) => {
+        if( myprofile != null && myprofile.doctorvisit.id(req.params.doctorvisitId).labreports) {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.id(req.params.labreportsId).reportdata);
+        }
+        else if (myprofile == null) {
+            err = new Error('myprofile ' + req.params.myprofileId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+        else {
+            err = new Error('doctorvisit ' + req.params.doctorvisitId + ' not found');
+            err.status = 404;
+            return next(err);            
+        }
+        
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+.post( (req, res, next) => {
+    Myprofiles.findById(req.params.myprofileId)
+    .then((myprofile) => {
+        if (myprofile != null && myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.id(req.params.labreportsId).reportdata) {
+            myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.id(req.params.labreportsId).reportdata.push(req.body);
+            
+            myprofile.save()
+            .then((myprofile) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(myprofile);
+            }, (err) => next(err));
+        }
+        else {
+            err = new Error('myprofile ' + req.params.myprofileId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+.put( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('PUT operation not supported on /myprofile');
+})
+.delete( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('DELETE operation not supported on /myprofile');
+});
 
 
 module.exports = myprofileRouter;
