@@ -53,7 +53,7 @@ exports.verifyAdmin = function(req, res, next) {
         } 
     }, (err) => next(err))
     .catch((err) => next(err))
-}
+};
 
 exports.verifyDoctor = function(req, res, next) {
     User.findOne({_id: req.user._id})
@@ -70,7 +70,7 @@ exports.verifyDoctor = function(req, res, next) {
         } 
     }, (err) => next(err))
     .catch((err) => next(err))
-}
+};
 exports.verifyLabtech = function(req, res, next) {
     User.findOne({_id: req.user._id})
     .then((user) => {
@@ -86,4 +86,20 @@ exports.verifyLabtech = function(req, res, next) {
         } 
     }, (err) => next(err))
     .catch((err) => next(err))
-}
+};
+exports.verifyPatient = function(req, res, next) {
+    User.findOne({_id: req.user._id})
+    .then((user) => {
+        console.log("User is ", req.user);
+        if (user.patient) {
+            next();
+        }
+
+        else {
+            err = new Error('Only labtechs can perform this action');
+            err.status = 403;
+            return next(err);
+        } 
+    }, (err) => next(err))
+    .catch((err) => next(err))
+};

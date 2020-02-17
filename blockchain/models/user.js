@@ -11,6 +11,9 @@ var User = new Schema({
     doctor: {
         type: Boolean,default:false 
     },
+    patient: {
+        type: Boolean,default:false 
+    },
     labtech : {
         type: Boolean,default:false 
     }

@@ -11,7 +11,7 @@ myprofileRouter.use(bodyParser.json());
 
 myprofileRouter.route('/')
 .options((req,res) => { res.sendStatus(200); })
-.get(authenticate.verifyUser, (req , res , next ) => {
+.get(authenticate.verifyUser || authenticate.verifyAdmin, (req , res , next ) => {
     Myprofiles.find(req.query) //passing query to find 
     .then((myprofiles) => {
         res.statusCode = 200;
@@ -20,7 +20,7 @@ myprofileRouter.route('/')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post(authenticate.verifyUser, (req, res, next) => {
+.post(authenticate.verifyUser || authenticate.verifyAdmin, (req, res, next) => {
     req.body.myprofile_name = req.user._id;
     Myprofiles.create(req.body)
     .then((myprofile) => {
@@ -35,7 +35,7 @@ myprofileRouter.route('/')
     res.statusCode = 403;
     res.end('PUT operation not supported on /myprofile');
 })
-.delete( authenticate.verifyUser, (req, res, next) => {
+.delete( authenticate.verifyUser || authenticate.verifyAdmin, (req, res, next) => {
     Myprofiles.remove({})
     .then((resp) => {
         res.statusCode = 200;
@@ -47,7 +47,7 @@ myprofileRouter.route('/')
 
 myprofileRouter.route('/:myprofileId')
 .options( (req, res) => { res.sendStatus(200); })
-.get(authenticate.verifyUser, (req,res,next) => {
+.get(authenticate.verifyUser || authenticate.verifyAdmin || authenticate.verifyPatient, (req,res,next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofiles) => {
         res.statusCode = 200;
@@ -60,7 +60,7 @@ myprofileRouter.route('/:myprofileId')
     res.statusCode = 403;
     res.end('you cannot create on /myprofile/'+ req.params.myprofileId);
 })
-.put( authenticate.verifyUser,  (req, res, next) => {
+.put( authenticate.verifyUser || authenticate.verifyAdmin || authenticate.verifyPatient,  (req, res, next) => {
     Myprofiles.findByIdAndUpdate(req.params.myprofileId, {
         $set: req.body
     }, { new: true })
@@ -71,7 +71,7 @@ myprofileRouter.route('/:myprofileId')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.delete( authenticate.verifyUser,  (req, res, next) => {
+.delete( authenticate.verifyUser || authenticate.verifyAdmin || authenticate.verifyPatient, (req, res, next) => {
     Myprofiles.findByIdAndRemove(req.params.myprofileId)
     .then((resp) => {
         res.statusCode = 200;
@@ -82,7 +82,7 @@ myprofileRouter.route('/:myprofileId')
 });
 
 myprofileRouter.route('/:myprofileId/doctorvisit')
-.get(authenticate.verifyUser,(req,res,next) => {
+.get(authenticate.verifyUser || authenticate.verifyDoctor || authenticate.verifyPatient,(req,res,next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if (myprofile != null) {
@@ -98,7 +98,7 @@ myprofileRouter.route('/:myprofileId/doctorvisit')
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post(authenticate.verifyUser,  (req, res, next) => {
+.post(authenticate.verifyUser || authenticate.verifyDoctor,   (req, res, next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if (myprofile != null) {
@@ -126,7 +126,7 @@ myprofileRouter.route('/:myprofileId/doctorvisit')
         + req.params.myprofileId );
 })
 
-.delete(authenticate.verifyUser, (req, res, next) => {
+.delete(authenticate.verifyUser || authenticate.verifyDoctor,  (req, res, next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if (myprofile != null) {
@@ -150,7 +150,7 @@ myprofileRouter.route('/:myprofileId/doctorvisit')
 });
 
 myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId')
-.get(authenticate.verifyUser, (req, res, next) => {
+.get(authenticate.verifyUser || authenticate.verifyDoctor || authenticate.verifyPatient, (req, res, next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if( myprofile != null && myprofile.doctorvisit.id) {
@@ -187,7 +187,7 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId')
 });
 
 myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports')
-.get(authenticate.verifyUser, (req, res, next) => {
+.get(authenticate.verifyUser || authenticate.verifyDoctor || authenticate.verifyPatient, (req, res, next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if( myprofile != null && myprofile.doctorvisit.id) {
@@ -210,7 +210,7 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports')
     .catch((err) => next(err));
 })
 
-.post(authenticate.verifyUser,  (req, res, next) => {
+.post(authenticate.verifyUser || authenticate.verifyDoctor,   (req, res, next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if (myprofile != null && myprofile.doctorvisit.id) {
@@ -243,7 +243,7 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports')
 });
 
 myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports/:labreportsId')
-.get(authenticate.verifyUser, (req, res, next) => {
+.get(authenticate.verifyUser || authenticate.verifyDoctor || authenticate.verifyPatient || authenticate.verifyLabtech, (req, res, next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if( myprofile != null && myprofile.doctorvisit.id(req.params.doctorvisitId).labreports) {
@@ -280,7 +280,7 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports/:labr
 
 
 myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports/:labreportsId/reportdata')
-.get(authenticate.verifyUser, (req, res, next) => {
+.get((authenticate.verifyUser || (authenticate.verifyPatient || authenticate.verifyLabtech || authenticate.verifyDoctor)), (req, res, next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if( myprofile != null && myprofile.doctorvisit.id(req.params.doctorvisitId).labreports) {
@@ -302,7 +302,7 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports/:labr
     }, (err) => next(err))
     .catch((err) => next(err));
 })
-.post( (req, res, next) => {
+.post( authenticate.verifyUser || authenticate.verifyLabtech, (req, res, next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if (myprofile != null && myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.id(req.params.labreportsId).reportdata) {
