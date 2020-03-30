@@ -81,14 +81,14 @@ hospitalRouter.route('/:hospitalId')
     .catch((err) => next(err));
 });
 
-hospitalRouter.route('/:hospitalId/doctorvisit')
+hospitalRouter.route('/:hospitalId/doctors')
 .get(authenticate.verifyUser || authenticate.verifyDoctor || authenticate.verifyPatient,(req,res,next) => {
     Hospitals.findById(req.params.hospitalId)
     .then((hospital) => {
         if (hospital != null) {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
-            res.json(hospital.doctorvisit);
+            res.json(hospital.doctors);
         }
         else {
             err = new Error('hospital ' + req.params.hospitalId + ' not found');
@@ -103,7 +103,7 @@ hospitalRouter.route('/:hospitalId/doctorvisit')
     .then((hospital) => {
         if (hospital != null) {
             req.body.labtech_name = req.user._id;
-            hospital.doctorvisit.push(req.body);
+            hospital.doctors.push(req.body);
             hospital.save()
             .then((hospital) => {
                 res.statusCode = 200;
@@ -130,8 +130,8 @@ hospitalRouter.route('/:hospitalId/doctorvisit')
     Hospitals.findById(req.params.hospitalId)
     .then((hospital) => {
         if (hospital != null) {
-            for (var i = (hospital.doctorvisit.length -1); i >= 0; i--) {
-                hospital.doctorvisit.id(hospital.doctorvisit[i]._id).remove();
+            for (var i = (hospital.doctors.length -1); i >= 0; i--) {
+                hospital.doctors.id(hospital.doctors[i]._id).remove();
             }
             hospital.save()
             .then((hospital) => {
@@ -149,14 +149,14 @@ hospitalRouter.route('/:hospitalId/doctorvisit')
     .catch((err) => next(err));    
 });
 
-hospitalRouter.route('/:hospitalId/doctorvisit/:doctorvisitId')
+hospitalRouter.route('/:hospitalId/doctors/:doctorsId')
 .get(authenticate.verifyUser || authenticate.verifyDoctor || authenticate.verifyPatient, (req, res, next) => {
     Hospitals.findById(req.params.hospitalId)
     .then((hospital) => {
-        if( hospital != null && hospital.doctorvisit.id) {
+        if( hospital != null && hospital.doctors.id) {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
-            res.json(hospital.doctorvisit.id(req.params.doctorvisitId));
+            res.json(hospital.doctors.id(req.params.doctorsId));
         }
         else if (hospital == null) {
             err = new Error('hospital ' + req.params.hospitalId + ' not found');
@@ -164,7 +164,7 @@ hospitalRouter.route('/:hospitalId/doctorvisit/:doctorvisitId')
             return next(err);
         }
         else {
-            err = new Error('doctorvisit ' + req.params.doctorvisitId + ' not found');
+            err = new Error('doctors ' + req.params.doctorsId + ' not found');
             err.status = 404;
             return next(err);            
         }

@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const authenticate = require('../authenticate');
 
 const Myprofiles = require('../models/myprofile');
+const Hospitals = require('../models/hospitals');
+
 
 const myprofileRouter = express.Router();
 
@@ -102,8 +104,34 @@ myprofileRouter.route('/:myprofileId/doctorvisit')
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if (myprofile != null) {
-            req.body.labtech_name = req.user._id;
+            
+           
+
+            // //const disease = req.body.disease;
+            // const locality = req.params.myprofileId.locality;
+            // const city = req.params.myprofileId.city;
+
+            // const nivas = new Surveys({
+            //     //disease =disease,
+            //     locality = locality,
+            //     city = city
+            // });
+            //const {disease}= req.body;
+            //const {locality} = myprofile
+            
+            const survey = {
+                disease:req.body.disease,
+                locality:myprofile.firstname,
+                city:myprofile.lastname
+            }
+            
+            console.log('********');
+            console.log(survey);
+            
+             Hospitals.survey.push(survey);
+             Hospitals.save();
             myprofile.doctorvisit.push(req.body);
+            //hospitals.survey.push(nivas);
             myprofile.save()
             .then((myprofile) => {
                 res.statusCode = 200;

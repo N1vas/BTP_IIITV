@@ -10,15 +10,21 @@ const doctorSchema = new Schema({
     
 });
 
+const surveySchema = new Schema({
+
+    disease : { type: String, required: true },
+    locality : { type: String, required: true },
+    city : { type: String, required: true }
+
+});
 
 const hospitalSchema = new Schema({
     
     hspid : { type: String, required: true, unique:true },
     hospital_name : { type: String, required: true, unique : true },
     description : { type: String, required: true },
-    doctors : [doctorSchema]
-   
-   
+    doctors : [doctorSchema],
+    survey : [surveySchema]
     
 });
 

@@ -13,6 +13,7 @@ var usersRouter = require('./routes/users');
 var planRouter = require('./routes/planRouter');
 var doctorRouter = require('./routes/doctorRouter');
 var myprofileRouter = require('./routes/myprofileRouter');
+var hospitalRouter = require('./routes/hospitalRouter');
 
 const mongoose = require('mongoose');
 
