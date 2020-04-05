@@ -128,8 +128,8 @@ myprofileRouter.route('/:myprofileId/doctorvisit')
             console.log('********');
             console.log(survey);
             
-             Hospitals.survey.push(survey);
-             Hospitals.save();
+            // Hospitals.survey.push(survey);
+             //Hospitals.save();
             myprofile.doctorvisit.push(req.body);
             //hospitals.survey.push(nivas);
             myprofile.save()

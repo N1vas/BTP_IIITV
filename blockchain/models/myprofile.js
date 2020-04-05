@@ -7,7 +7,7 @@ var reportSchema =new Schema({
     date         : { type : Date, default : Date.now },
     obsnsamp     : { type : String, required : true },
     report       : { type : String, required : true },
-    labtech_name : { type : mongoose.Schema.Types.ObjectId, ref : 'User' }
+    labtech_name : { type : String }
     
 });
 
@@ -25,7 +25,7 @@ var doctorSchema = new Schema({
     prescription : { type : String, required : true },
     labreports   : [repnameSchema],
     hspid        : { type : String, required : true },
-    doctor_name  : { type : mongoose.Schema.Types.ObjectId, ref : 'User' }
+    doctor_name  : { type : String }
 
 });
 
