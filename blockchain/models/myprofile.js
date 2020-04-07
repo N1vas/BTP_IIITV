@@ -25,11 +25,17 @@ var doctorSchema = new Schema({
     prescription : { type : String, required : true },
     labreports   : [repnameSchema],
     hspid        : { type : String, required : true },
-    doctor_name  : { type : String }
+    doctor_name  : { type : String, required : true },
+    class_type   : { type : String, required : true }
 
 });
 
+var blockSchema = new Schema({
 
+    cbhash : { type : String },
+    pbhash : { type : string }
+
+});
 
 var myprofileSchema = new Schema({
 
@@ -39,7 +45,8 @@ var myprofileSchema = new Schema({
     gender : { type : String, required : true },
     locality : { type: String},
     city : { type:String },
-    doctorvisit : [doctorSchema]
+    doctorvisit : [doctorSchema],
+    blockadd : [blockSchema]
 
 });
 
