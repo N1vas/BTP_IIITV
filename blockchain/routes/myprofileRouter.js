@@ -5,7 +5,7 @@ const authenticate = require('../authenticate');
 
 const Myprofiles = require('../models/myprofile');
 const Hospitals = require('../models/hospitals');
-
+var SHA256 = require("crypto-js/sha256");
 
 const myprofileRouter = express.Router();
 
@@ -82,6 +82,8 @@ myprofileRouter.route('/:myprofileId')
     }, (err) => next(err))
     .catch((err) => next(err));
 });
+
+
 
 myprofileRouter.route('/:myprofileId/doctorvisit')
 .get(authenticate.verifyUser || authenticate.verifyDoctor || authenticate.verifyPatient,(req,res,next) => {
@@ -213,6 +215,68 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId')
     res.statusCode = 403;
     res.end('DELETE operation not supported on /myprofile');
 });
+
+
+myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/dohash')
+.get(authenticate.verifyUser || authenticate.verifyDoctor || authenticate.verifyPatient, (req, res, next) => {
+    Myprofiles.findById(req.params.myprofileId)
+    .then((myprofile) => {
+        if( myprofile != null && myprofile.doctorvisit.id) {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(myprofile.doctorvisit.id(req.params.doctorvisitId).dohash);
+        }
+        else if (myprofile == null) {
+            err = new Error('myprofile ' + req.params.myprofileId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+        else {
+            err = new Error('doctorvisit ' + req.params.doctorvisitId + ' not found');
+            err.status = 404;
+            return next(err);            
+        }
+        
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+
+.post(authenticate.verifyUser || authenticate.verifyDoctor,   (req, res, next) => {
+    Myprofiles.findById(req.params.myprofileId)
+    .then((myprofile) => {
+        if (myprofile != null && myprofile.doctorvisit.id) {
+
+            req.body.cbhash = SHA256(myprofile.doctorvisit.id(req.params.doctorvisitId));
+            myprofile.doctorvisit.id(req.params.doctorvisitId).dohash.push(req.body);
+            
+            myprofile.save()
+            .then((myprofile) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(myprofile);
+            }, (err) => next(err));
+        }
+        else {
+            err = new Error('myprofile ' + req.params.myprofileId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+
+})
+
+.put( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('PUT operation not supported on /myprofile');
+})
+.delete( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('DELETE operation not supported on /myprofile');
+});
+
+
+
 
 myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports')
 .get(authenticate.verifyUser || authenticate.verifyDoctor || authenticate.verifyPatient, (req, res, next) => {

@@ -16,7 +16,11 @@ var repnameSchema = new Schema({
     reportname : { type : String, required : true },
     reportdata : [reportSchema]
 });
+var hashaddSchema = new Schema({
+    isadded : { type : Boolean },
+    cbhash : { type : String }
 
+});
 var doctorSchema = new Schema({
     
     date         : { type : Date , default : Date.now },
@@ -26,14 +30,17 @@ var doctorSchema = new Schema({
     labreports   : [repnameSchema],
     hspid        : { type : String, required : true },
     doctor_name  : { type : String, required : true },
-    class_type   : { type : String, required : true }
+    class_type   : { type : String, required : true },
+    dohash       : [ hashaddSchema]
 
 });
+
+
 
 var blockSchema = new Schema({
 
     cbhash : { type : String },
-    pbhash : { type : string }
+    pbhash : { type : String }
 
 });
 
