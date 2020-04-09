@@ -247,8 +247,15 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/dohash')
         if (myprofile != null && myprofile.doctorvisit.id) {
 
             req.body.cbhash = SHA256(myprofile.doctorvisit.id(req.params.doctorvisitId));
-            myprofile.doctorvisit.id(req.params.doctorvisitId).dohash.push(req.body);
+            const temp1 =req.body.cbhash;
+            const temp2 = "none for now";
+            const lol = { 
+                cbhash : temp1 ,
+                pbhash : temp2
+            };
             
+            myprofile.doctorvisit.id(req.params.doctorvisitId).dohash.push(req.body);
+            myprofile.blockadd.push(lol);
             myprofile.save()
             .then((myprofile) => {
                 res.statusCode = 200;
