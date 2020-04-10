@@ -248,7 +248,10 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/dohash')
 
             req.body.cbhash = SHA256(myprofile.doctorvisit.id(req.params.doctorvisitId));
             const temp1 =req.body.cbhash;
-            const temp2 = "none for now";
+            var a = myprofile.blockadd.length;
+            console.log(a);
+            const temp2 = myprofile.blockadd[a-1].cbhash;
+            console.log(temp2);
             const lol = { 
                 cbhash : temp1 ,
                 pbhash : temp2
