@@ -44,6 +44,10 @@ var blockSchema = new Schema({
 
 });
 
+var allowSchema = new Schema({
+    user_id:{type:String}
+});
+
 var myprofileSchema = new Schema({
 
     firstname : { type : String, required : true },
@@ -53,7 +57,8 @@ var myprofileSchema = new Schema({
     locality : { type: String},
     city : { type:String },
     doctorvisit : [doctorSchema],
-    blockadd : [blockSchema]
+    blockadd : [blockSchema],
+    allow: [allowSchema],
 
 });
 

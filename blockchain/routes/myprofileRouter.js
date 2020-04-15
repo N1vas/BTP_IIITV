@@ -49,12 +49,16 @@ myprofileRouter.route('/')
 
 myprofileRouter.route('/:myprofileId')
 .options( (req, res) => { res.sendStatus(200); })
-.get(authenticate.verifyUser || authenticate.verifyAdmin || authenticate.verifyPatient, (req,res,next) => {
+.get(authenticate.verifyUser , (req,res,next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofiles) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(myprofiles);
+            
+          
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(myprofiles);
+            
+            
     }, (err) => next(err))
     .catch((err) => next(err));
 })
@@ -84,15 +88,52 @@ myprofileRouter.route('/:myprofileId')
 });
 
 
+myprofileRouter.route('/:myprofileId/allow')
+.post(authenticate.verifyUser || authenticate.verifyDoctor,   (req, res, next) => {
+    Myprofiles.findById(req.params.myprofileId)
+    .then((myprofile) => {
+        if (myprofile != null) {           
+            myprofile.allow.push(req.body);
+           
+            myprofile.save()
+            .then((myprofile) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(myprofile);
+            }, (err) => next(err));
+        }
+        else {
+            err = new Error('myprofile ' + req.params.myprofileId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+
+})
 
 myprofileRouter.route('/:myprofileId/doctorvisit')
 .get(authenticate.verifyUser || authenticate.verifyDoctor || authenticate.verifyPatient,(req,res,next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if (myprofile != null) {
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.json(myprofile.doctorvisit);
+            console.log(req.user._id);
+            console.log(myprofile._id);
+            var check= "0";
+            for(var i=0;i<myprofile.allow.length;i++){
+                if(myprofile.allow[i].user_id==req.user._id){
+                   check="1"; 
+                }
+            }
+            if(check == "1"){
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(myprofile.doctorvisit);
+            }    
+            else{
+                res.statusCode = 403;
+    res.end('you didnt have permisiion here'+ req.params.myprofileId);
+            }    
         }
         else {
             err = new Error('myprofile ' + req.params.myprofileId + ' not found');
@@ -105,35 +146,9 @@ myprofileRouter.route('/:myprofileId/doctorvisit')
 .post(authenticate.verifyUser || authenticate.verifyDoctor,   (req, res, next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
-        if (myprofile != null) {
-            
-           
-
-            // //const disease = req.body.disease;
-            // const locality = req.params.myprofileId.locality;
-            // const city = req.params.myprofileId.city;
-
-            // const nivas = new Surveys({
-            //     //disease =disease,
-            //     locality = locality,
-            //     city = city
-            // });
-            //const {disease}= req.body;
-            //const {locality} = myprofile
-            
-            const survey = {
-                disease:req.body.disease,
-                locality:myprofile.firstname,
-                city:myprofile.lastname
-            }
-            
-            console.log('********');
-            console.log(survey);
-            
-            // Hospitals.survey.push(survey);
-             //Hospitals.save();
+        if (myprofile != null) {           
             myprofile.doctorvisit.push(req.body);
-            //hospitals.survey.push(nivas);
+           
             myprofile.save()
             .then((myprofile) => {
                 res.statusCode = 200;
