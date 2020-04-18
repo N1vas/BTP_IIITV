@@ -21,12 +21,18 @@ var hashaddSchema = new Schema({
     cbhash : { type : String }
 
 });
+
+var prescriptionSchema = new Schema({
+    drugname    : { type : String, required : true },
+    timetotake  :{ type : String, required : true }
+});
+
 var doctorSchema = new Schema({
     
     date         : { type : Date , default : Date.now },
     observation  : { type : String, required : true },
     disease      : { type : String, required : true },
-    prescription : { type : String, required : true },
+    prescription : [prescriptionSchema],
     labreports   : [repnameSchema],
     hspid        : { type : String, required : true },
     doctor_name  : { type : String, required : true },
@@ -45,7 +51,13 @@ var blockSchema = new Schema({
 });
 
 var allowSchema = new Schema({
-    user_id:{type:String}
+    user_id:{type:String},
+    blocktype:{type: String}
+    
+});
+
+var insuranceSchema= new Schema({
+   insurance_details: { type : String, required : true }
 });
 
 var myprofileSchema = new Schema({
@@ -59,6 +71,7 @@ var myprofileSchema = new Schema({
     doctorvisit : [doctorSchema],
     blockadd : [blockSchema],
     allow: [allowSchema],
+    insurance:[insuranceSchema]
 
 });
 
