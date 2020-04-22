@@ -50,9 +50,18 @@ var blockSchema = new Schema({
 
 });
 
+var permissionSchema= new Schema({
+    perm_allow:{type:String}
+});
+
+var divisionSchema=new Schema({
+    division_name:{type:String},
+    permissiontype:[permissionSchema]
+});
+
 var allowSchema = new Schema({
     user_id:{type:String},
-    blocktype:{type: String}
+    divisiontype:[divisionSchema]
     
 });
 

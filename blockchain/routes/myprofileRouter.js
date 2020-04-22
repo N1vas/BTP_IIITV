@@ -123,9 +123,19 @@ myprofileRouter.route('/:myprofileId/doctorvisit')
             for(var i=0;i<myprofile.allow.length;i++){
                 if(myprofile.allow[i].user_id==req.user._id){
                    check="1"; 
+                   for(var j=0;j<myprofile.allow[i].user_id.divisiontype.length;j++){
+                        if(myprofile.allow[i].user_id.divisiontype[0].division_name=="doctor"){
+                            chech="2";
+                            for(var k=0;k<myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype.length;k++){
+                                if(myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype[k].perm_allow=="r"){
+                                    check="3";
+                                }
+                            }
+                        }     
+                   }
                 }
             }
-            if(check == "1"){
+            if(check == "3"){
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(myprofile.doctorvisit);
@@ -146,7 +156,24 @@ myprofileRouter.route('/:myprofileId/doctorvisit')
 .post(authenticate.verifyUser || authenticate.verifyDoctor,   (req, res, next) => {
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
-        if (myprofile != null) {           
+        if (myprofile != null) {
+            var check= "0";
+            for(var i=0;i<myprofile.allow.length;i++){
+                if(myprofile.allow[i].user_id==req.user._id){
+                   check="1"; 
+                   for(var j=0;j<myprofile.allow[i].user_id.divisiontype.length;j++){
+                        if(myprofile.allow[i].user_id.divisiontype[0].division_name=="doctor"){
+                            chech="2";
+                            for(var k=0;k<myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype.length;k++){
+                                if(myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype[k].perm_allow=="r"){
+                                    check="3";
+                                }
+                            }
+                        }     
+                   }
+                }
+            }
+            if(check=="3"){           
             myprofile.doctorvisit.push(req.body);
            
             myprofile.save()
@@ -155,6 +182,8 @@ myprofileRouter.route('/:myprofileId/doctorvisit')
                 res.setHeader('Content-Type', 'application/json');
                 res.json(myprofile);
             }, (err) => next(err));
+
+            }
         }
         else {
             err = new Error('myprofile ' + req.params.myprofileId + ' not found');
@@ -199,9 +228,29 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId')
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if( myprofile != null && myprofile.doctorvisit.id) {
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.json(myprofile.doctorvisit.id(req.params.doctorvisitId));
+
+            var check= "0";
+            for(var i=0;i<myprofile.allow.length;i++){
+                if(myprofile.allow[i].user_id==req.user._id){
+                   check="1"; 
+                   for(var j=0;j<myprofile.allow[i].user_id.divisiontype.length;j++){
+                        if(myprofile.allow[i].user_id.divisiontype[0].division_name=="doctor"){
+                            chech="2";
+                            for(var k=0;k<myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype.length;k++){
+                                if(myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype[k].perm_allow=="r"){
+                                    check="3";
+                                }
+                            }
+                        }     
+                   }
+                }
+            }
+            if(check=="3"){
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(myprofile.doctorvisit.id(req.params.doctorvisitId));
+            }    
+
         }
         else if (myprofile == null) {
             err = new Error('myprofile ' + req.params.myprofileId + ' not found');
@@ -308,9 +357,28 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports')
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if( myprofile != null && myprofile.doctorvisit.id) {
+
+            var check= "0";
+            for(var i=0;i<myprofile.allow.length;i++){
+                if(myprofile.allow[i].user_id==req.user._id){
+                   check="1"; 
+                   for(var j=0;j<myprofile.allow[i].user_id.divisiontype.length;j++){
+                        if(myprofile.allow[i].user_id.divisiontype[0].division_name=="doctor"){
+                            chech="2";
+                            for(var k=0;k<myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype.length;k++){
+                                if(myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype[k].perm_allow=="r"){
+                                    check="3";
+                                }
+                            }
+                        }     
+                   }
+                }
+            }
+            if(check=="3"){
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.json(myprofile.doctorvisit.id(req.params.doctorvisitId).labreports);
+            }
         }
         else if (myprofile == null) {
             err = new Error('myprofile ' + req.params.myprofileId + ' not found');
@@ -331,14 +399,31 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports')
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if (myprofile != null && myprofile.doctorvisit.id) {
-            myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.push(req.body);
-            
-            myprofile.save()
-            .then((myprofile) => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.json(myprofile);
-            }, (err) => next(err));
+            var check= "0";
+            for(var i=0;i<myprofile.allow.length;i++){
+                if(myprofile.allow[i].user_id==req.user._id){
+                   check="1"; 
+                   for(var j=0;j<myprofile.allow[i].user_id.divisiontype.length;j++){
+                        if(myprofile.allow[i].user_id.divisiontype[0].division_name=="doctor"){
+                            chech="2";
+                            for(var k=0;k<myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype.length;k++){
+                                if(myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype[k].perm_allow=="r"){
+                                    check="3";
+                                }
+                            }
+                        }     
+                   }
+                }
+            }
+            if(check=="3"){
+                myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.push(req.body);            
+                myprofile.save()
+                .then((myprofile) => {
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json(myprofile);
+                }, (err) => next(err));
+            }
         }
         else {
             err = new Error('myprofile ' + req.params.myprofileId + ' not found');
@@ -364,9 +449,29 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports/:labr
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if( myprofile != null && myprofile.doctorvisit.id(req.params.doctorvisitId).labreports) {
+
+            var check= "0";
+            for(var i=0;i<myprofile.allow.length;i++){
+                if(myprofile.allow[i].user_id==req.user._id){
+                   check="1"; 
+                   for(var j=0;j<myprofile.allow[i].user_id.divisiontype.length;j++){
+                        if(myprofile.allow[i].user_id.divisiontype[0].division_name=="doctor"){
+                            chech="2";
+                            for(var k=0;k<myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype.length;k++){
+                                if(myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype[k].perm_allow=="r"){
+                                    check="3";
+                                }
+                            }
+                        }     
+                   }
+                }
+            }
+            if(check=="3"){
+
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.json(myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.id(req.params.labreportsId));
+            }
         }
         else if (myprofile == null) {
             err = new Error('myprofile ' + req.params.myprofileId + ' not found');
@@ -401,9 +506,28 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports/:labr
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if( myprofile != null && myprofile.doctorvisit.id(req.params.doctorvisitId).labreports) {
+
+            var check= "0";
+            for(var i=0;i<myprofile.allow.length;i++){
+                if(myprofile.allow[i].user_id==req.user._id){
+                   check="1"; 
+                   for(var j=0;j<myprofile.allow[i].user_id.divisiontype.length;j++){
+                        if(myprofile.allow[i].user_id.divisiontype[0].division_name=="doctor"){
+                            chech="2";
+                            for(var k=0;k<myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype.length;k++){
+                                if(myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype[k].perm_allow=="r"){
+                                    check="3";
+                                }
+                            }
+                        }     
+                   }
+                }
+            }
+            if(check=="3"){
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
             res.json(myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.id(req.params.labreportsId).reportdata);
+            }    
         }
         else if (myprofile == null) {
             err = new Error('myprofile ' + req.params.myprofileId + ' not found');
@@ -423,6 +547,25 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports/:labr
     Myprofiles.findById(req.params.myprofileId)
     .then((myprofile) => {
         if (myprofile != null && myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.id(req.params.labreportsId).reportdata) {
+
+            var check= "0";
+            for(var i=0;i<myprofile.allow.length;i++){
+                if(myprofile.allow[i].user_id==req.user._id){
+                   check="1"; 
+                   for(var j=0;j<myprofile.allow[i].user_id.divisiontype.length;j++){
+                        if(myprofile.allow[i].user_id.divisiontype[0].division_name=="doctor"){
+                            chech="2";
+                            for(var k=0;k<myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype.length;k++){
+                                if(myprofile.allow[i].user_id.divisiontype[0].division_name.permissiontype[k].perm_allow=="r"){
+                                    check="3";
+                                }
+                            }
+                        }     
+                   }
+                }
+            }
+
+            if(check=="3"){
             myprofile.doctorvisit.id(req.params.doctorvisitId).labreports.id(req.params.labreportsId).reportdata.push(req.body);
             
             myprofile.save()
@@ -431,6 +574,9 @@ myprofileRouter.route('/:myprofileId/doctorvisit/:doctorvisitId/labreports/:labr
                 res.setHeader('Content-Type', 'application/json');
                 res.json(myprofile);
             }, (err) => next(err));
+            
+            }
+
         }
         else {
             err = new Error('myprofile ' + req.params.myprofileId + ' not found');
