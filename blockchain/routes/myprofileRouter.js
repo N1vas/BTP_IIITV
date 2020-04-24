@@ -362,8 +362,6 @@ myprofileRouter.route('/:myprofileId/allow/:allowId/divisiontype/:divisiontypeId
                 res.json(myprofile);
             }, (err) => next(err));
             
-            
-
         }
         else {
             err = new Error('myprofile ' + req.params.myprofileId + ' not found');
@@ -381,6 +379,95 @@ myprofileRouter.route('/:myprofileId/allow/:allowId/divisiontype/:divisiontypeId
     res.statusCode = 403;
     res.end('DELETE operation not supported on /myprofile');
 });
+
+/////////////24th APril 2020
+myprofileRouter.route('/:myprofileId/allow/:allowId/divisiontype/:divisiontypeId/division_name/:division_nameId')
+.get((authenticate.verifyUser ), (req, res, next) => {
+    Myprofiles.findById(req.params.myprofileId)
+    .then((myprofile) => {
+        if( myprofile != null && myprofile.allow.id(req.params.allowId).divisiontype.id(req.params.divisiontypeId).division_name) {
+
+            
+          
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(myprofile.allow.id(req.params.allowId).divisiontype.id(req.params.divisiontypeId).division_name.id(req.params.division_nameId));
+              
+        }
+        else if (myprofile == null) {
+            err = new Error('myprofile ' + req.params.myprofileId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+        else {
+            err = new Error('doctorvisit ' + req.params.doctorvisitId + ' not found');
+            err.status = 404;
+            return next(err);            
+        }
+        
+    }, (err) => next(err))
+    .catch((err) => next(err));
+});
+
+myprofileRouter.route('/:myprofileId/allow/:allowId/divisiontype/:divisiontypeId/division_name/:division_nameId/permissiontype')
+.get((authenticate.verifyUser ), (req, res, next) => {
+    Myprofiles.findById(req.params.myprofileId)
+    .then((myprofile) => {
+        if( myprofile != null && myprofile.allow.id(req.params.allowId).divisiontype.id(req.params.divisiontypeId).division_name.id(req.params.division_name)) {
+          
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(myprofile.allow.id(req.params.allowId).divisiontype.id(req.params.divisiontypeId).division_name.id(req.params.division_name).permissiontype);
+              
+        }
+        else if (myprofile == null) {
+            err = new Error('myprofile ' + req.params.myprofileId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+        else {
+            err = new Error('doctorvisit ' + req.params.doctorvisitId + ' not found');
+            err.status = 404;
+            return next(err);            
+        }
+        
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+.post( authenticate.verifyUser || authenticate.verifyLabtech, (req, res, next) => {
+    Myprofiles.findById(req.params.myprofileId)
+    .then((myprofile) => {
+        if (myprofile != null && myprofile.allow.id(req.params.allowId).divisiontype.id(req.params.divisiontypeId).division_name.id(req.params.division_name)) {
+
+            myprofile.allow.id(req.params.allowId).divisiontype.id(req.params.divisiontypeId).division_name.id(req.params.division_name).permissiontype.push(req.body);
+            
+            myprofile.save()
+            .then((myprofile) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(myprofile);
+            }, (err) => next(err));
+            
+        }
+        else {
+            err = new Error('myprofile ' + req.params.myprofileId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));
+})
+.put( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('PUT operation not supported on /myprofile');
+})
+.delete( (req, res, next) => {
+    res.statusCode = 403;
+    res.end('DELETE operation not supported on /myprofile');
+});
+
+
+
 
 ////////////////////////////////////////////////////
 myprofileRouter.route('/:myprofileId/doctorvisit')
