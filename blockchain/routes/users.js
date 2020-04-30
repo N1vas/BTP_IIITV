@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var User = require('../models/user');
 var passport = require('passport');
 var authenticate = require('../authenticate');
+const Myprofiles = require('../models/myprofile');
 
 var router = express.Router();
 router.use(bodyParser.json());
@@ -13,7 +14,15 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/signup', (req, res, next) => {
-  User.register(new User({username: req.body.username}), 
+  User.register(new User({
+    username: req.body.username,
+    firstname:req.body.firstname,
+    lastname:req.body.lastname,
+    dob:req.body.dob,
+    gender:req.body.gender,
+    locality:req.body.locality,
+    city:req.body.city       
+  }), 
     req.body.password, (err, user) => {
     if(err) {
       res.statusCode = 500;
@@ -24,7 +33,9 @@ router.post('/signup', (req, res, next) => {
       passport.authenticate('local')(req, res, () => {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        res.json({success: true, status: 'Registration Successful!'});
+        res.json(user._id);
+        Myprofiles.create({user_id:user.id});
+        
       });
     }
   });

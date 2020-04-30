@@ -70,12 +70,8 @@ var insuranceSchema= new Schema({
 
 var myprofileSchema = new Schema({
 
-    firstname : { type : String, required : true },
-    lastname : { type : String, required : true },
-    dob : { type : String, required : true },
-    gender : { type : String, required : true },
-    locality : { type: String},
-    city : { type:String },
+    user_id : { type : String, required : true },
+    
     doctorvisit : [doctorSchema],
     blockadd : [blockSchema],
     allow: [allowSchema],
